@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/cubism2.min.js"></script>
+	</head>
+	<body>
+		<canvas id=canvas></canvas>
+		<div id="control"></div>
+	</body>
+	<script>
+		const cubism2Model =
+		"https://cdn.jsdelivr.net/gh/guansss/pixi-live2d-display/test/assets/shizuku/shizuku.model.json";
+		const displacementMap =
+		"https://cdn.jsdelivr.net/gh/pixijs/pixi-filters/tools/demo/images/displacement_map.png";
+		
+		(async function main() {
+		  const app = new PIXI.Application({
+		    view: document.getElementById("canvas"),
+		    autoStart: true,
+		    resizeTo: window,
+		    backgroundColor: 0x333333 });
+		
+		
+		  const model = await PIXI.live2d.Live2DModel.from(cubism2Model);
+		
+		  const scaleX = innerWidth * 0.8 / model.width;
+		  const scaleY = innerHeight * 0.8 / model.height;
+		
+		  // fit the window
+		  model.scale.set(Math.min(scaleX, scaleY));
+		  model.y = innerHeight * 0.1;
+		
+		  // handle tapping
+			model.registerInteraction(model,PIXI.InteractionManager);
+		  model.on("hit", hitAreas => {
+			console.log(hitAreas);
+		//     if (hitAreas.includes("body")) {
+		//       model.motion("tap_body");
+		//     }
+		
+		//     if (hitAreas.includes("head")) {
+		//       model.expression();
+		//     }
+		  });
+		
+		  // set up render texture
+		
+		  const baseRenderTexture = new PIXI.BaseRenderTexture(
+		  model.width,
+		  model.height);
+		
+		  const renderTexture = new PIXI.RenderTexture(baseRenderTexture);
+		  const sprite = new PIXI.Sprite(renderTexture);
+		  sprite.scale.set(3);
+		  sprite.y = -sprite.height / 5;
+		  sprite.alpha = 0.3;
+		
+		  // set up filter
+		
+		  const displacementSprite = PIXI.Sprite.from(displacementMap, {
+		    wrapMode: PIXI.WRAP_MODES.REPEAT });
+		
+		
+		  model.filters = [new PIXI.filters.DisplacementFilter(displacementSprite, 6)];
+		
+		  app.ticker.add(dt => {
+		    // animate the displacement map
+		    displacementSprite.x += dt * 10;
+		
+		    // render on the render texture
+		    app.renderer.render(model, renderTexture);
+		  });
+		
+		  app.stage.addChild(sprite);
+		  app.stage.addChild(displacementSprite);
+		  app.stage.addChild(model);
+		
+		  checkbox(
+		  "DisplacementFilter",
+		  checked => model.filters[0].enabled = checked,
+		  true);
+		
+		})();
+		
+		function checkbox(name, onChange, defaultValue) {
+		  const id = name.replace(/\W/g, "").toLowerCase();
+		
+		  let checkbox = document.getElementById(id);
+		
+		  if (!checkbox) {
+		    const p = document.createElement("p");
+		    p.innerHTML = `<input type="checkbox" id="${id}" ${
+		    defaultValue ? "checked" : ""
+		    }> <label for="${id}">${name}</label>`;
+		
+		    document.getElementById("control").appendChild(p);
+		    checkbox = p.firstChild;
+		  }
+		
+		  checkbox.addEventListener("change", () => {
+		    onChange(checkbox.checked);
+		  });
+		
+		  onChange(checkbox.checked);
+		}
+	</script>
+	
+	<style>
+		#control {
+		  position: absolute;
+		  top: 8px;
+		  left: 24px;
+		  color: #fff;
+		  font-size: 18px;
+		}
+	</style>
+</html>
