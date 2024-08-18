@@ -1,8 +1,10 @@
 
 window.PIXI = PIXI;
 const live2d = PIXI.live2d;
-const canvasWidth = 400;
-const canvasHeigth = 400;
+const canvasWidth = 300;//画布宽
+const canvasHeigth = 400;//画布高
+const firstModelId=0;//首次加载的模型id
+const firstModelTexturesId=0;//首次加载的材质id
 
 async function loadWidget(config) {
 	let {
@@ -18,20 +20,17 @@ async function loadWidget(config) {
 			<div id="waifu-tips"></div>
 			<canvas id="live2d"></canvas>
 			<div id="waifu-tool">
-				<span class="fa fa-lg fa-comment"></span>
-				<span class="fa fa-lg fa-paper-plane"></span>
-				<span class="fa fa-lg fa-user-circle"></span>
-				<span class="fa fa-lg fa-street-view"></span>
-				<span class="fa fa-lg fa-camera-retro"></span>
-				<span class="fa fa-lg fa-info-circle"></span>
-				<span class="fa fa-lg fa-times"></span>
+				<span class="fa fa-thin fa-xl fa-comment"></span>
+				<span class="fa fa-thin fa-xl fa-paper-plane"></span>
+				<span class="fa fa-thin fa-xl fa-user-circle"></span>
+				<span class="fa fa-thin fa-xl fa-street-view"></span>
+				<span class="fa fa-thin fa-xl fa-info-circle"></span>
+				<span class="fa fa-thin fa-xl fa-times"></span>
 			</div>
 		</div>`);
 	document.getElementById("live2d").width = canvasWidth;
 	document.getElementById("live2d").height = canvasHeigth;
 
-	// 注册 InteractionManager 以支持 Live2D 模型的自动交互
-	//Renderer.registerPlugin('interaction', InteractionManager);
 	const app = new PIXI.Application({
 		width: canvasWidth,
 		height: canvasHeigth,
@@ -80,8 +79,8 @@ async function loadWidget(config) {
 			modelTexturesId = localStorage.getItem("modelTexturesId");
 		if (modelId === null) {
 			// 首次访问加载 指定模型 的 指定材质
-			modelId = 0; // 模型 ID
-			modelTexturesId = 0; // 材质 ID
+			modelId = firstModelId; // 模型 ID
+			modelTexturesId = firstModelTexturesId; // 材质 ID
 		}
 
 		await loadModelConfig(modelId);
@@ -95,9 +94,11 @@ async function loadWidget(config) {
 					expression
 				} of waifuTips.mouseover) {
 					if (!event.target.matches(selector)) continue;
-					text = randomSelection(text);
-					text = text.replace("{text}", event.target.innerText);
-					showMessage(text, 4000, 8);
+					if (text) {
+						text = randomSelection(text);
+						text = text.replace("{text}", event.target.innerText);
+						showMessage(text, 4000, 8);
+					}
 					if (motion) setMotion(model, motion);
 					else if (expression) setExpression(model, expression);
 					return;
@@ -115,7 +116,7 @@ async function loadWidget(config) {
 					text = text.replace("{text}", event.target.innerText);
 					showMessage(text, 4000, 8);
 					//console.log(document.getElementById("live2d").getBoundingClientRect());
-					if (motion) setMotion(model,motion);
+					if (motion) setMotion(model, motion);
 					else if (expression) setExpression(model, expression);
 					return;
 				}
@@ -135,7 +136,6 @@ async function loadWidget(config) {
 					text = randomSelection(text);
 					text = text.replace("{year}", now.getFullYear());
 					showMessage(text, 7000, true);
-					//messageArray.push(text);
 				}
 			});
 		});
@@ -155,11 +155,6 @@ async function loadWidget(config) {
 		});
 		document.querySelector("#waifu-tool .fa-user-circle").addEventListener("click", loadOtherModel);
 		document.querySelector("#waifu-tool .fa-street-view").addEventListener("click", loadRandModel);
-		document.querySelector("#waifu-tool .fa-camera-retro").addEventListener("click", () => {
-			showMessage(waifuTips.messages.capture, 6000, 9);
-			Live2D.captureName = "photo.png";
-			Live2D.captureFrame = true;
-		});
 		document.querySelector("#waifu-tool .fa-info-circle").addEventListener("click", () => {
 			open(waifuTips.messages.about);
 		});
@@ -168,7 +163,8 @@ async function loadWidget(config) {
 			showMessage(waifuTips.messages.close, 2000, 11);
 			document.getElementById("waifu").style.bottom = "-500px";
 			setTimeout(() => {
-				document.getElementById("waifu").style.display = "none";
+				//document.getElementById("waifu").style.display = "none";//有动作就会出现无头的情况
+				app.stop();
 				document.getElementById("waifu-toggle").classList.add("waifu-toggle-active");
 			}, 3000);
 		});
@@ -182,6 +178,10 @@ async function loadWidget(config) {
 		});
 		window.addEventListener("visibilitychange", () => {
 			if (!document.hidden) showMessage(waifuTips.messages.focus, 6000, 9);
+		});
+		const toggle = document.getElementById("waifu-toggle");
+		toggle.addEventListener("click", () => {
+			app.start();
 		});
 	}
 
@@ -458,6 +458,7 @@ async function loadWidget(config) {
 		} else path = waifuPath;
 		const response = await fetch(path);
 		waifuTips = await response.json();
+		if(waifuTips.messages.meetMsg)showMessage(waifuTips.messages.meetMsg,8000,9)
 	}
 
 	async function loadModelConfig(modelId) {
@@ -470,15 +471,9 @@ async function loadWidget(config) {
 		localStorage.setItem("modelTexturesId", modelTexturesId);
 		showMessage(message, 4000, 10);
 		app.stage.removeChildren();
-		model = await live2d.Live2DModel.from(idSelection(modelList.models[modelId].url,modelTexturesId));
+		model = await live2d.Live2DModel.from(idSelection(modelList.models[modelId].url, modelTexturesId));
 		app.stage.addChild(model);
 		model.buttonMode = true;
-
-		// 交互
-		model.on('hit', (hitAreas) => {
-			console.log(hitAreas);
-			console.log(hitAreas.includes("body"));
-		});
 		autoSetTransform(model, modelId);
 		drawHitArea(model);
 		console.log(model);
@@ -504,18 +499,16 @@ async function loadWidget(config) {
 	}
 
 	//设置表情
-	async function setExpression(model, exp,time=4) {
-		//const modelId=localStorage.getItem("modelId");
+	async function setExpression(model, exp, time = 4) {
 		const expressionManager = model.internalModel.motionManager.expressionManager;
-		//resetExpression
 		if (exp) {
-			if(waifuTips.expression && waifuTips.expression[exp])showMessage(waifuTips.expression[exp],time*1000,7);
+			if (waifuTips.expression && waifuTips.expression[exp]) showMessage(waifuTips.expression[exp], time * 1000, 7);
 			expressionManager.setExpression(randomSelection(exp));
 			setTimeout(() => {
 				expressionManager.resetExpression();
 				//重置表情不会修改当前表情，且当修改的表情与当前表情一致时，修改会失败，所以重置表情后需要手动修改当前表情的值
-				expressionManager.currentExpression=expressionManager.defaultExpression;
-			}, time*1000);
+				expressionManager.currentExpression = expressionManager.defaultExpression;
+			}, time * 1000);
 		} else {
 			expressionManager.setExpression(); //随机加载表情
 		}
@@ -523,8 +516,7 @@ async function loadWidget(config) {
 
 	//设置动作
 	async function setMotion(model, group, index) {
-		if(waifuTips.motion && waifuTips.motion[group])showMessage(waifuTips.motion[group],5000,7);
-		//if (!index)index= Math.floor(Math.random() * model.internalModel.motionManager.definitions[group].length);
+		if (waifuTips.motion && waifuTips.motion[group]) showMessage(waifuTips.motion[group], 5000, 7);
 		console.log(await model.motion(group, index));
 	}
 
@@ -542,9 +534,6 @@ async function loadWidget(config) {
 		if (Array.isArray(modelList.models[modelId].url)) {
 			const index = (++modelTexturesId >= modelList.models[modelId].url.length) ? 0 :
 				modelTexturesId;
-			//localStorage.setItem("modelTexturesId", index);
-			//const target = idSelection(modelList.models[modelId],index);
-			//l2dwaifu=loadlive2d("live2d", `${modelListPath}model/${target}/index.json`);
 			loadModel(modelId, index);
 			showMessage(waifuTips.messages.newClothes, 4000, 10);
 		} else showMessage(waifuTips.messages.notNewClothes, 4000, 10);
@@ -558,10 +547,9 @@ async function loadWidget(config) {
 	async function loadOtherModel() {
 		let modelId = localStorage.getItem("modelId");
 		const index = (++modelId >= modelList.models.length) ? 0 : modelId;
-		loadModel(index, 0, "");//modelList.models[index].message.meetMsg
+		loadModel(index, 0, "");
 		loadModelConfig(index);
 	}
-	//loadModelConfig();
 
 
 	await initModel();
@@ -569,8 +557,6 @@ async function loadWidget(config) {
 	registerEventListener();
 	welcomeMessage();
 	//idelTips();
-	//
-	//
 }
 
 function initWidget(config) {
@@ -585,7 +571,7 @@ function initWidget(config) {
 			toggle.removeAttribute("first-time");
 		} else {
 			localStorage.removeItem("waifu-display");
-			document.getElementById("waifu").style.display = "";
+			//document.getElementById("waifu").style.display = "";
 			setTimeout(() => {
 				document.getElementById("waifu").style.bottom = 0;
 			}, 0);

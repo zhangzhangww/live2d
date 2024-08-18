@@ -17,32 +17,61 @@ function loadExternalResource(url, type) {
 			tag.src = url;
 		}
 		if (tag) {
-			tag.onload = () => resolve(url);
+			tag.onload = () => {
+				resolve(url);
+			}
 			tag.onerror = () => reject(url);
 			document.head.appendChild(tag);
 		}
 	});
 }
+async function loadScriptsInOrder(){
+	if (screen.width >= 768) {//使用宽度判断设备是否适合加载
+	await Promise.all([
+			loadExternalResource(live2d_path + "pixi.min.js", "js"),
+			loadExternalResource("./live2d.min.js", "js"),
+			loadExternalResource("./live2dcubismcore.min.js", "js"),
+			loadExternalResource("http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js", "js"),
+			loadExternalResource(live2d_path + "waifu.css", "css"),
+			loadExternalResource("https://cdn.bootcdn.net/ajax/libs/font-awesome/6.6.0/css/all.min.css", "css")
+		])
+	await loadExternalResource("./index.min.js", "js");
+	await loadExternalResource(live2d_path + "waifu-tips.js", "js");
+	initWidget({
+		waifuPath: live2d_path + "waifu-tips.json",
+		modelListPath: "./model_list.json"
+	});
+}}
+
+loadScriptsInOrder();
+
 
 // 加载 waifu.css live2d.min.js waifu-tips.js
-if (screen.width >= 768) {
-	Promise.all([
-		loadExternalResource(live2d_path + "waifu.css", "css"),
-		loadExternalResource(live2d_path + "waifu-tips.js", "js")
-	]).then(() => {
-		initWidget({
-			waifuPath: live2d_path + "waifu-tips.json",
-			// apiPath: "https://live2d.fghrsh.net/api/",
-			// cdnPath: "https://cdn.jsdelivr.net/gh/fghrsh/live2d_api/"
-			// cdnPath: "https://live2d-api.vercel.app/"
-			//apiPath: "https://api3.fghrsh.net/live2d/"
-			// cdnPath: "https://gitee.com/ajream/live2d_api/raw/master/"
-			//cdnPath: "https://ghproxy.net/https://raw.githubusercontent.com/lrplrplrp/live2d_api/master/"
-			//cdnPath: "https://gitee.com/lrplrplrp/live2d_api/raw/main/"
-			modelListPath: "./model_list.json"
-		});
-	});
-}
+// if (screen.width >= 768) {//使用宽度判断设备是否适合加载
+// 	Promise.all([
+// 		loadExternalResource(live2d_path + "pixi.min.js", "js"),
+// 		loadExternalResource("./live2d.min.js", "js"),
+// 		loadExternalResource("./live2dcubismcore.min.js", "js"),
+// 		loadExternalResource("http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js", "js"),
+// 		loadExternalResource("https://cdn.bootcdn.net/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css", "css")
+// 	]).then(Promise.all([
+// 		loadExternalResource("./index.min.js", "js"),
+// 		loadExternalResource(live2d_path + "waifu.css", "css"),
+// 		loadExternalResource(live2d_path + "waifu-tips.js", "js")
+// 	]).then(() => {
+// 		initWidget({
+// 			waifuPath: live2d_path + "waifu-tips.json",
+// 			// apiPath: "https://live2d.fghrsh.net/api/",
+// 			// cdnPath: "https://cdn.jsdelivr.net/gh/fghrsh/live2d_api/"
+// 			// cdnPath: "https://live2d-api.vercel.app/"
+// 			//apiPath: "https://api3.fghrsh.net/live2d/"
+// 			// cdnPath: "https://gitee.com/ajream/live2d_api/raw/master/"
+// 			//cdnPath: "https://ghproxy.net/https://raw.githubusercontent.com/lrplrplrp/live2d_api/master/"
+// 			//cdnPath: "https://gitee.com/lrplrplrp/live2d_api/raw/main/"
+// 			modelListPath: "./model_list.json"
+// 		});
+// 	}));
+// }
 // initWidget 第一个参数为 waifu-tips.json 的路径，第二个参数为 API 地址
 // API 后端可自行搭建，参考 https://github.com/fghrsh/live2d_api
 // 初始化看板娘会自动加载指定目录下的 waifu-tips.json
