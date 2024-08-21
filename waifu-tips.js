@@ -5,6 +5,7 @@ const canvasWidth = 300;//画布宽
 const canvasHeigth = 400;//画布高
 const firstModelId=0;//首次加载的模型id
 const firstModelTexturesId=0;//首次加载的材质id
+const github="https://github.com/lrplrplrp/live2d"
 
 async function loadWidget(config) {
 	let {
@@ -20,15 +21,17 @@ async function loadWidget(config) {
 			<div id="waifu-tips"></div>
 			<canvas id="live2d"></canvas>
 			<div id="waifu-tool">
-				<span class="fa fa-thin fa-xl fa-comment"></span>
-				<span class="fa fa-thin fa-xl fa-paper-plane"></span>
-				<span class="fa fa-thin fa-xl fa-user-circle"></span>
-				<span class="fa fa-thin fa-xl fa-street-view"></span>
-				<span class="fa fa-thin fa-xl fa-info-circle"></span>
-				<span class="fa fa-thin fa-xl fa-times"></span>
+				<span class="fa fa-xl fa-comment"></span>
+				<span class="fa fa-xl fa-solid fa-cloud"></span>
+				<span class="fa fa-xl fa-paper-plane"></span>
+				<span class="fa fa-xl fa-user-circle"></span>
+				<span class="fa fa-xl fa-street-view"></span>
+				<span class="fa fa-xl fa-info-circle"></span>
+				<span class="fa fa-xl fa-brands fa-github"></span>
+				<span class="fa fa-xl fa-times"></span>
 			</div>
 		</div>`);
-	document.getElementById("live2d").width = canvasWidth;
+	document.getElementById("live2d").width = canvasWidth;//fa-brands fa-github   fa-solid fa-cloud 
 	document.getElementById("live2d").height = canvasHeigth;
 
 	const app = new PIXI.Application({
@@ -54,25 +57,69 @@ async function loadWidget(config) {
 	}
 
 	// 检测用户活动状态，并在空闲时显示消息
-
 	let userAction = false,
-		userActionTimer,
+		userActionTimer=0,
 		messageTimer;
 	window.addEventListener("mousemove", () => userAction = true);
 	window.addEventListener("keydown", () => userAction = true);
 	setInterval(() => {
-		if (userAction) {
-			userAction = false;
-			clearInterval(userActionTimer);
-			userActionTimer = null;
-		} else if (!userActionTimer) {
-			userActionTimer = setInterval(() => {
-				showMessage(randomSelection(waifuTips.messages.idleMsg), 6000, 9);
-			}, 20000);
-		}
+		if (userAction) userActionTimer=0;
 	}, 1000);
 
+	let weather=await getWeather();
+	//在特定时间执行一次操作
+	setInterval(async () => {
+		const now=new Date();
+		waifuTips.timer.forEach(({
+			date,
+			time,
+			interaction
+		}) => {
+			if (checkDateTime(date,time,now)) {
+				loadInteraction(interaction);
+			}
+		});
+		if(userActionTimer>=60)loadInteraction(waifuTips.messages.idleMsg);
+		const nowWeather=await getWeather();
+		if(weather!=nowWeather){
+			showWeatherText();
+			weather=nowWeather;
+		}
+	}, 60000);
 
+	const firstMin=new Date().getMinutes();
+	function checkDateTime(date,time,now){
+		function checkDate(){
+			if(!date)return true;
+			let dateSplit=date.split("-");
+			after = dateSplit[0],
+			before = dateSplit[1] || after;
+			let afterSplit=after.split("/"),
+			beforeSplit=before.split("/");
+			if ((afterSplit[0] <= now.getMonth() + 1 && now.getMonth() + 1 <=beforeSplit[0]) && 
+			(afterSplit[1] <= now.getDate() && now.getDate() <= beforeSplit[1])) return true;
+			return false;
+		}
+		function checkTime(){
+			if(!time)return true;
+			let timeSplit=time.split("-");
+			after = timeSplit[0],
+			before = timeSplit[1] || after;
+			let afterSplit=after.split(":"),
+			beforeSplit=before.split(":");
+			if(timeSplit[1]){
+				if((afterSplit[0] <= now.getHours() && now.getHours() <=beforeSplit[0])){
+					if(firstMin==now.getMinutes())return true;
+					else return false;
+				}
+			}
+			if ((afterSplit[0] <= now.getHours() && now.getHours() <=beforeSplit[0]) && 
+			(afterSplit[1] <= now.getMinutes() && now.getMinutes() <= beforeSplit[1])) return true;
+			return false;
+		}
+		return (checkDate() && checkTime())
+	}
+	
 
 	async function initModel() {
 		let modelId = localStorage.getItem("modelId"),
@@ -89,60 +136,31 @@ async function loadWidget(config) {
 			window.addEventListener("mouseover", event => {
 				for (let {
 					selector,
-					text,
-					motion,
-					expression
+					interaction
 				} of waifuTips.mouseover) {
 					if (!event.target.matches(selector)) continue;
-					if (text) {
-						text = randomSelection(text);
-						text = text.replace("{text}", event.target.innerText);
-						showMessage(text, 4000, 8);
-					}
-					if (motion) setMotion(model, motion);
-					else if (expression) setExpression(model, expression);
+					console.log(interaction);
+					if(interaction)loadInteraction(interaction);
 					return;
 				}
 			});
 			window.addEventListener("click", event => {
 				for (let {
 					selector,
-					text,
-					motion,
-					expression
+					interaction
 				} of waifuTips.click) {
 					if (!event.target.matches(selector)) continue;
-					text = randomSelection(text);
-					text = text.replace("{text}", event.target.innerText);
-					showMessage(text, 4000, 8);
-					//console.log(document.getElementById("live2d").getBoundingClientRect());
-					if (motion) setMotion(model, motion);
-					else if (expression) setExpression(model, expression);
+					if(interaction)loadInteraction(interaction,(text)=>text.replace("{text}", event.target.innerText));
 					return;
 				}
 			});
-			waifuTips.seasons.forEach(({
-				date,
-				text
-			}) => {
-				const now = new Date(),
-					after = date.split("-")[0],
-					before = date.split("-")[1] || after;
-				if ((after.split("/")[0] <= now.getMonth() + 1 && now.getMonth() + 1 <=
-					before
-						.split("/")[0]) && (after.split("/")[1] <= now.getDate() && now
-							.getDate() <=
-							before.split("/")[1])) {
-					text = randomSelection(text);
-					text = text.replace("{year}", now.getFullYear());
-					showMessage(text, 7000, true);
-				}
-			});
+			
 		});
 	}
 
 	function registerEventListener() {
-		document.querySelector("#waifu-tool .fa-comment").addEventListener("click", showWeatherText); //showHitokoto
+		document.querySelector("#waifu-tool .fa-comment").addEventListener("click", showHitokoto); //showHitokoto
+		document.querySelector("#waifu-tool .fa-cloud").addEventListener("click", showWeatherText);//fa-cloud
 		document.querySelector("#waifu-tool .fa-paper-plane").addEventListener("click", () => {
 			if (window.Asteroids) {
 				if (!window.ASTEROIDSPLAYERS) window.ASTEROIDSPLAYERS = [];
@@ -155,12 +173,11 @@ async function loadWidget(config) {
 		});
 		document.querySelector("#waifu-tool .fa-user-circle").addEventListener("click", loadOtherModel);
 		document.querySelector("#waifu-tool .fa-street-view").addEventListener("click", loadRandModel);
-		document.querySelector("#waifu-tool .fa-info-circle").addEventListener("click", () => {
-			open(waifuTips.messages.about);
-		});
+		document.querySelector("#waifu-tool .fa-info-circle").addEventListener("click", () => {loadInteraction(waifuTips.messages.about);});
+		document.querySelector("#waifu-tool .fa-github").addEventListener("click", () => {open(github);});
 		document.querySelector("#waifu-tool .fa-times").addEventListener("click", () => {
 			localStorage.setItem("waifu-display", Date.now());
-			showMessage(waifuTips.messages.close, 2000, 11);
+			//showMessage(waifuTips.messages.close, 11);
 			document.getElementById("waifu").style.bottom = "-500px";
 			setTimeout(() => {
 				//document.getElementById("waifu").style.display = "none";//有动作就会出现无头的情况
@@ -168,16 +185,19 @@ async function loadWidget(config) {
 				document.getElementById("waifu-toggle").classList.add("waifu-toggle-active");
 			}, 3000);
 		});
-		const devtools = () => { };
-		console.log("%c", devtools);
-		devtools.toString = () => {
-			showMessage(waifuTips.messages.devtools, 6000, 9);
-		};
+
+		// const devtools = () => { };//试了几个方法都不是很准确，放弃了
+		// devtools.toString = () => {
+		// 	showMessage(waifuTips.messages.devtools, 9);
+		// };
+		// console.log("%c", devtools);
+
+		
 		window.addEventListener("copy", () => {
-			showMessage(waifuTips.messages.copy, 6000, 9);
+			loadInteraction(waifuTips.messages.copy,null,priority=4);
 		});
 		window.addEventListener("visibilitychange", () => {
-			if (!document.hidden) showMessage(waifuTips.messages.focus, 6000, 9);
+			if (!document.hidden) loadInteraction(waifuTips.messages.focus);
 		});
 		const toggle = document.getElementById("waifu-toggle");
 		toggle.addEventListener("click", () => {
@@ -190,31 +210,17 @@ async function loadWidget(config) {
 	function welcomeMessage() {
 		let text;
 		if (location.pathname === "/lrplrplrp/") { // 如果是主页，可在浏览器后台输入location.pathname确定判断条件
-			const now = new Date().getHours();
-			if (now > 5 && now <= 7) text = waifuTips.messages.t5_7;
-			else if (now > 7 && now <= 11) text = waifuTips.messages.t7_11;
-			else if (now > 11 && now <= 13) text = waifuTips.messages.t11_13;
-			else if (now > 13 && now <= 17) text = waifuTips.messages.t13_17;
-			else if (now > 17 && now <= 19) text = waifuTips.messages.t17_19;
-			else if (now > 19 && now <= 21) text = waifuTips.messages.t19_21;
-			else if (now > 21 && now <= 23) text = waifuTips.messages.t21_23;
-			else text = waifuTips.messages.tOther;
-		} else if (document.referrer !== "") {
+			loadInteraction(waifuTips.messages.home)
+		} 
+		if (document.referrer !== "") {
 			const referrer = new URL(document.referrer),
 				domain = referrer.hostname.split(".")[1];
-			if (location.hostname === referrer.hostname) text =
-				waifuTips.messages.location;
-			else if (domain === "baidu") text =
-				waifuTips.messages.domain_baidu;
-			else if (domain === "so") text =
-				waifuTips.messages.domain_so;
-			else if (domain === "google") text =
-				waifuTips.messages.domain_google;
-			else text = waifuTips.messages.domain_other;
-		} else {
-			text = waifuTips.messages.path_other;
-		}
-		showMessage(text, 7000, 8);
+			if (location.hostname === referrer.hostname) text = waifuTips.messages.location;
+			for(key in waifuTips.messages.domain)if(domain===key)text=waifuTips.messages.domain[key];
+			if(!text) text = waifuTips.messages.domain_other;
+		} 
+		if(!text)text = waifuTips.messages.path_other;
+		loadInteraction(text);
 	}
 
 	function showHitokoto() {
@@ -222,12 +228,7 @@ async function loadWidget(config) {
 		fetch("https://v1.hitokoto.cn?c=k")
 			.then(response => response.json())
 			.then(result => {
-				const text =
-					`这句一言来自 <span>「${result.from}」</span>，是 <span>${result.creator}</span> 在 hitokoto.cn 投稿的。`;
-				showMessage(result.hitokoto, 6000, 9);
-				setTimeout(() => {
-					showMessage(text, 4000, 9);
-				}, 6000);
+				showMessage(result.hitokoto,9);
 			});
 	}
 
@@ -255,8 +256,8 @@ async function loadWidget(config) {
 		const weather = await getWeather();
 		if ("weather" in waifuTips && weather in waifuTips.weather) {
 			const text = waifuTips.weather[weather];
-			showMessage(text, 6000, 9);
-		} else showMessage(`现在的天气是${weather}`, 6000, 9);
+			loadInteraction(text);
+		} else loadInteraction({text:`现在的天气是${weather}`});
 	}
 
 	//作者并没兼容老版模型的hitarea，需要自己完成点击区域的创建
@@ -269,7 +270,7 @@ async function loadWidget(config) {
 			//没想到特别好的办法，只能先将就一下了
 			model.on('click', (hitarea) => {
 				const canvasPro = document.getElementById("live2d").getBoundingClientRect();
-				console.log(hitarea.data.originalEvent.clientX, hitarea.data.originalEvent.clientY);
+				//console.log(hitarea.data.originalEvent.clientX, hitarea.data.originalEvent.clientY);
 				if (hitarea.data.originalEvent.clientY - canvasPro.top < canvasHeigth / 2) setMotion(model, "flick_head");
 				else setMotion(model, "tap_body");
 			});
@@ -427,7 +428,8 @@ async function loadWidget(config) {
 		} 
 	}*/
 
-	function showMessage(text, timeout, priority) {
+	//优先级规划：交互优先级：1 ，text优先级：3，各类特殊事件优先级：9
+	function showMessage(text,priority,timeout) {
 		if (!text || (sessionStorage.getItem("waifu-text") && sessionStorage.getItem("waifu-text") > priority))
 			return;
 		if (messageTimer) {
@@ -435,6 +437,7 @@ async function loadWidget(config) {
 			messageTimer = null;
 		}
 		text = randomSelection(text);
+		timeout=timeout?timeout:countChars(text)*1000;
 		sessionStorage.setItem("waifu-text", priority);
 		const tips = document.getElementById("waifu-tips");
 		tips.innerHTML = text;
@@ -458,7 +461,7 @@ async function loadWidget(config) {
 		} else path = waifuPath;
 		const response = await fetch(path);
 		waifuTips = await response.json();
-		if(waifuTips.messages.meetMsg)showMessage(waifuTips.messages.meetMsg,8000,9)
+		if(waifuTips.messages.meetMsg)loadInteraction(waifuTips.messages.meetMsg)
 	}
 
 	async function loadModelConfig(modelId) {
@@ -466,15 +469,14 @@ async function loadWidget(config) {
 		await loadWaifuTips(modelId);
 	}
 
-	async function loadModel(modelId, modelTexturesId, message) {
+	async function loadModel(modelId, modelTexturesId) {
 		localStorage.setItem("modelId", modelId);
 		localStorage.setItem("modelTexturesId", modelTexturesId);
-		showMessage(message, 4000, 10);
 		app.stage.removeChildren();
 		model = await live2d.Live2DModel.from(idSelection(modelList.models[modelId].url, modelTexturesId));
 		app.stage.addChild(model);
 		model.buttonMode = true;
-		autoSetTransform(model, modelId);
+		autoSetTransform(modelId);
 		drawHitArea(model);
 		console.log(model);
 		console.log(`Live2D 模型 ${modelId}-${modelTexturesId} 加载完成`);
@@ -482,7 +484,7 @@ async function loadWidget(config) {
 	}
 
 	//自动调整模型位置和大小，使其适应元素
-	function autoSetTransform(model, modelId) {
+	function autoSetTransform(modelId) {
 		const h = canvasHeigth / model.internalModel.originalHeight;
 		const w = canvasWidth / model.internalModel.originalWidth;
 		if ('config' in modelList.models[modelId]) { //读取用户配置并修改配置
@@ -499,10 +501,10 @@ async function loadWidget(config) {
 	}
 
 	//设置表情
-	async function setExpression(model, exp, time = 4) {
+	async function setExpression( exp, time = 4) {
 		const expressionManager = model.internalModel.motionManager.expressionManager;
 		if (exp) {
-			if (waifuTips.expression && waifuTips.expression[exp]) showMessage(waifuTips.expression[exp], time * 1000, 7);
+			if (waifuTips.expression && waifuTips.expression[exp]) showMessage(waifuTips.expression[exp], 1);
 			expressionManager.setExpression(randomSelection(exp));
 			setTimeout(() => {
 				expressionManager.resetExpression();
@@ -515,9 +517,40 @@ async function loadWidget(config) {
 	}
 
 	//设置动作
-	async function setMotion(model, group, index) {
-		if (waifuTips.motion && waifuTips.motion[group]) showMessage(waifuTips.motion[group], 5000, 7);
+	async function setMotion( group, index) {
+		if (waifuTips.motion && waifuTips.motion[group]) showMessage(waifuTips.motion[group], 1);
 		console.log(await model.motion(group, index));
+	}
+
+	//中英文字符计算，并返回读完所需的大概时间，单位s
+	function countChars(str) {
+		let chinese = 0; 
+		let english = 0; 
+		let special = 0; 
+	   
+		for (let i = 0; i < str.length; i++) {
+		  const charCode = String(str).charCodeAt(i);
+		  if (charCode >= 0x4E00 && charCode <= 0x9FFF) {
+			chinese++;
+		  } else if ((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122)) {
+			english++;
+		  } else {
+			special++;
+		  }
+		}
+		return 2+(~~(chinese/3)+~~(english/10)+~~(special/2));
+	}
+
+	//交互读取
+	function loadInteraction(interaction,textFunc,priority=3){
+		let text="";
+		if(interaction.text){
+			text=randomSelection(interaction.text);
+			if(textFunc)textFunc(text);
+			showMessage(text,priority);
+		}
+		if(interaction.motion)setMotion( interaction.motion);
+		else if(interaction.expression)setExpression( interaction.expression, time)
 	}
 
 	async function loadRandModel() {
@@ -535,8 +568,8 @@ async function loadWidget(config) {
 			const index = (++modelTexturesId >= modelList.models[modelId].url.length) ? 0 :
 				modelTexturesId;
 			loadModel(modelId, index);
-			showMessage(waifuTips.messages.newClothes, 4000, 10);
-		} else showMessage(waifuTips.messages.notNewClothes, 4000, 10);
+			loadInteraction(waifuTips.messages.newClothes);
+		} else loadInteraction(waifuTips.messages.notNewClothes);
 
 		//控制台输出模型材质id
 		console.log("模型ID:" + modelId);
@@ -553,10 +586,8 @@ async function loadWidget(config) {
 
 
 	await initModel();
-
 	registerEventListener();
 	welcomeMessage();
-	//idelTips();
 }
 
 function initWidget(config) {

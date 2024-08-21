@@ -16,14 +16,13 @@
     },
     {
       "url":[
-        "https://npm.elemecdn.com/akilar-live2dapi@latest/model/33/2018bls-summer/index.json",
-        "https://raw.kkgithub.com/lrplrplrp/live2d_api/master/model/Pio/animal-costume-racoon/index.json"
+        "./model/live2d_api-master/model/HyperdimensionNeptunia/nepnep/index.json"
       ],
       "config":{
         "x":0,
-        "y":0,
+        "y":-170,
         "scaleX":1,
-        "scaleY":1
+        "scaleY":1.6
       }
     }
   ]

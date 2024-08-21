@@ -29,17 +29,17 @@ async function loadScriptsInOrder(){
 	if (screen.width >= 768) {//使用宽度判断设备是否适合加载
 	await Promise.all([
 			loadExternalResource(live2d_path + "pixi.min.js", "js"),
-			loadExternalResource("./live2d.min.js", "js"),
-			loadExternalResource("./live2dcubismcore.min.js", "js"),
+			loadExternalResource(live2d_path + "live2d.min.js", "js"),
+			loadExternalResource(live2d_path + "live2dcubismcore.min.js", "js"),
 			loadExternalResource("http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js", "js"),
 			loadExternalResource(live2d_path + "waifu.css", "css"),
-			loadExternalResource("https://cdn.bootcdn.net/ajax/libs/font-awesome/6.6.0/css/all.min.css", "css")
+			loadExternalResource("https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css", "css")
 		])
-	await loadExternalResource("./index.min.js", "js");
+	await loadExternalResource(live2d_path + "index.min.js", "js");
 	await loadExternalResource(live2d_path + "waifu-tips.js", "js");
 	initWidget({
 		waifuPath: live2d_path + "waifu-tips.json",
-		modelListPath: "./model_list.json"
+		modelListPath: live2d_path + "model_list.json"
 	});
 }}
 
