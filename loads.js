@@ -30,7 +30,7 @@ async function loadScriptsInOrder(){
 			loadExternalResource(live2d_path + "pixi.min.js", "js"),
 			loadExternalResource(live2d_path + "live2d.min.js", "js"),
 			loadExternalResource(live2d_path + "live2dcubismcore.min.js", "js"),
-			loadExternalResource("http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js", "js"),
+			loadExternalResource("https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js", "js"),
 			loadExternalResource(live2d_path + "waifu.css", "css"),
 			loadExternalResource("https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css", "css")
 		])
