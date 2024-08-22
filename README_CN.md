@@ -4,6 +4,7 @@
 -   [:link:新增结构](#新增结构)
 -   [:link:鸣谢](#鸣谢)
 -   [:link:参考链接](#参考链接)
+-   [:link:演示地址](https://lrplrplrp.github.io/live2dDemo.html)
 -   大家好啊，磨了这么长时间总算是把船新版本的前端改好了，在此首先感谢[guansss]("https://github.com/guansss/pixi-live2d-display")大佬的live2d框架以及之前编写live2d的大佬们。此次修改重新设计了waifu-jips.json与model_list.json的结构，并且可以对单个模型单独配置waifu-jips.json，模型的地址也可以随意配置。总的来说，就是支持了更多配置、支持了更多模型、优化了配置逻辑。
 ##  食用说明
 -   快速使用，只需在head标签内加上如下代码，load.js 为你的 load.js 文件地址

@@ -239,7 +239,7 @@ async function loadWidget(config) {
 		let weather;
 		await $.ajax({
 			type: "GET",
-			url: "http://cdn.weather.hao.360.cn/sed_api_weather_info.php?app=360chrome",
+			url: "https://cdn.weather.hao.360.cn/sed_api_weather_info.php?app=360chrome",
 			dataType: "jsonp",
 			jsonp: "_jsonp", //参数名  
 			success: function (result) {
