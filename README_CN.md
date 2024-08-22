@@ -107,5 +107,11 @@ const github="https://github.com/lrplrplrp/live2d"//github地址
 ```
 -   交互配置中同时存在动作和表情时，将优先播放表情，交互文本的优先级要高于动作文本，其他文本的优先级高于交互文本
 ##  鸣谢
-
+-	[stevenjoezhang](https://github.com/stevenjoezhang)
+-	[fghrsh](https://github.com/fghrsh)
+-	[guansss](https://github.com/guansss)
+-	[Akilarlxh](https://github.com/Akilarlxh)
 ##  参考链接
+-	[https://github.com/stevenjoezhang/live2d-widget](https://github.com/stevenjoezhang/live2d-widget)
+-	[https://github.com/fghrsh/live2d_api](https://github.com/fghrsh/live2d_api)
+-	[https://github.com/guansss/pixi-live2d-display](https://github.com/guansss/pixi-live2d-display)
