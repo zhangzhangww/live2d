@@ -2,7 +2,7 @@
   "models": [
     {
       "url":"https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/genshin/BCSZ1.1/BCSZ1.1.model3.json",
-      "tipsUrl":"https://cdn.jsdelivr.net/gh/lrplrplrp/live2d@main/waifu-tips-BCSZ.json",
+      "tipsUrl":"https://raw.bgithub.xyz/lrplrplrp/live2d/main/waifu-tips-BCSZ.json",
       "config":{
         "x":0,
         "y":0,
@@ -12,7 +12,7 @@
     },
     {
       "url":"https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/genshin/草神/草神.model3.json",
-      "tipsUrl":"https://cdn.jsdelivr.net/gh/lrplrplrp/live2d@main/waifu-tips-草神.json"
+      "tipsUrl":"https://raw.bgithub.xyz/lrplrplrp/live2d/main/waifu-tips-草神.json"
     },
     {
       "url":[

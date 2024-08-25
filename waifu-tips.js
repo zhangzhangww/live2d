@@ -42,9 +42,9 @@ async function loadWidget(config) {
 		transparent: true
 	});
 
-	setTimeout(() => {
-		document.getElementById("waifu").style.bottom = 0;
-	}, 0);
+	// setTimeout(() => {
+	// 	document.getElementById("waifu").style.bottom = 0;
+	// }, 0);
 
 	if (localStorage.getItem("skin") === "furvous") document.getElementById("waifu-tips").style.color = "white";
 
@@ -243,6 +243,7 @@ async function loadWidget(config) {
 			dataType: "jsonp",
 			jsonp: "_jsonp", //参数名  
 			success: function (result) {
+				console.log(result);
 				if (now <= 9) weather = result.weather[0].info.dawn[1];
 				else if (now > 9 && now <= 16) weather = result.weather[0].info.day[1];
 				else weather = result.weather[0].info.night[1];
@@ -256,6 +257,7 @@ async function loadWidget(config) {
 		const weather = await getWeather();
 		if ("weather" in waifuTips && weather in waifuTips.weather) {
 			const text = waifuTips.weather[weather];
+			console.log(text);
 			loadInteraction(text);
 		} else loadInteraction({text:`现在的天气是${weather}`});
 	}
@@ -480,6 +482,9 @@ async function loadWidget(config) {
 		drawHitArea(model);
 		console.log(model);
 		console.log(`Live2D 模型 ${modelId}-${modelTexturesId} 加载完成`);
+		//setTimeout(() => {
+		document.getElementById("waifu").style.bottom = 0;
+		//}, 500);
 		return model;
 	}
 

@@ -116,3 +116,4 @@ const github="https://github.com/lrplrplrp/live2d"//github地址
 -	[https://github.com/stevenjoezhang/live2d-widget](https://github.com/stevenjoezhang/live2d-widget)
 -	[https://github.com/fghrsh/live2d_api](https://github.com/fghrsh/live2d_api)
 -	[https://github.com/guansss/pixi-live2d-display](https://github.com/guansss/pixi-live2d-display)
+-	[https://github.com/Akilarlxh/live2d_api](https://github.com/Akilarlxh/live2d_api)
