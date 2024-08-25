@@ -264,15 +264,15 @@ async function loadWidget(config) {
 	function drawHitArea(model) {
 		if (Object.keys(model.internalModel.hitAreas).length > 0) {
 			model.on('hit', (hitarea) => {
-				setMotion(model, "Tap" + hitarea);
+				setMotion( "Tap" + hitarea);
 			});
 		} else if ("hit_areas_custom" in model.internalModel.settings.json) {
 			//没想到特别好的办法，只能先将就一下了
 			model.on('click', (hitarea) => {
 				const canvasPro = document.getElementById("live2d").getBoundingClientRect();
 				//console.log(hitarea.data.originalEvent.clientX, hitarea.data.originalEvent.clientY);
-				if (hitarea.data.originalEvent.clientY - canvasPro.top < canvasHeigth / 2) setMotion(model, "flick_head");
-				else setMotion(model, "tap_body");
+				if (hitarea.data.originalEvent.clientY - canvasPro.top < canvasHeigth / 2) setMotion( "flick_head");
+				else setMotion( "tap_body");
 			});
 		}
 	}
@@ -518,8 +518,9 @@ async function loadWidget(config) {
 
 	//设置动作
 	async function setMotion( group, index) {
+		console.log(group);
+		console.log(await model.motion(group, index),group);
 		if (waifuTips.motion && waifuTips.motion[group]) showMessage(waifuTips.motion[group], 1);
-		console.log(await model.motion(group, index));
 	}
 
 	//中英文字符计算，并返回读完所需的大概时间，单位s
@@ -538,7 +539,7 @@ async function loadWidget(config) {
 			special++;
 		  }
 		}
-		return 2+(~~(chinese/3)+~~(english/10)+~~(special/2));
+		return 1+(~~(chinese/3)+~~(english/10)+~~(special/2));
 	}
 
 	//交互读取
