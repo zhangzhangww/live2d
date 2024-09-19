@@ -6,23 +6,23 @@
       "config":{
         "x":0,
         "y":0,
-        "scaleX":1.8,
-        "scaleY":1.8
+        "scaleX":2,
+        "scaleY":2
       }
     },
     {
-      "url":"https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/genshin/草神/草神.model3.json",
-      "tipsUrl":"https://raw.bgithub.xyz/lrplrplrp/live2d/main/waifu-tips-草神.json"
+      "url":"./model/live2d_api-master/model/genshin/草神/草神.model3.json",
+      "tipsUrl":"./waifu-tips-草神.json"
     },
     {
       "url":[
-        "https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/HyperdimensionNeptunia/nepnep/index.json"
+        "./model/live2d_api-master/model/HyperdimensionNeptunia/nepnep/index.json"
       ],
       "config":{
         "x":0,
         "y":-170,
         "scaleX":1,
-        "scaleY":1.6
+        "scaleY":1
       }
     }
   ]
