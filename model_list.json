@@ -11,18 +11,18 @@
       }
     },
     {
-      "url":"./model/live2d_api-master/model/genshin/草神/草神.model3.json",
+      "url":"https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/genshin/草神/草神.model3.json",
       "tipsUrl":"./waifu-tips-草神.json"
     },
     {
       "url":[
-        "./model/live2d_api-master/model/HyperdimensionNeptunia/nepnep/index.json"
+        "https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/HyperdimensionNeptunia/nepnep/index.json"
       ],
       "config":{
         "x":0,
         "y":-170,
         "scaleX":1,
-        "scaleY":1
+        "scaleY":1.5
       }
     }
   ]

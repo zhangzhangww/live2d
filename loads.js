@@ -38,7 +38,8 @@ async function loadScriptsInOrder(){
 	await loadExternalResource(live2d_path + "waifu-tips.js", "js");
 	initWidget({
 		waifuPath: live2d_path + "waifu-tips.json",
-		modelListPath: live2d_path + "model_list.json"
+		modelListPath: live2d_path + "model_list.json",
+		modelPath:live2d_path
 	});
 }}
 

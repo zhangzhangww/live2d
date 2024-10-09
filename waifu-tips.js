@@ -10,7 +10,8 @@ const github="https://github.com/lrplrplrp/live2d"
 async function loadWidget(config) {
 	let {
 		waifuPath,
-		modelListPath
+		modelListPath,
+		modelPath
 	} = config;
 	let modelList,
 		waifuTips,
@@ -241,12 +242,12 @@ async function loadWidget(config) {
 	//晴，多云，小雨，阴
 	async function getWeather() {
 		const now = new Date().getHours();
-		let weather;
-		await fetch("https://api.vore.top/api/Weather")
-			.then(response => response.json())
-			.then(result => {
-				weather=result.data.tianqi.weather;
-		});
+		let weather="晴";
+		// await fetch("https://api.vore.top/api/Weather")
+		// 	.then(response => response.json())
+		// 	.then(result => {
+		// 		weather=result.data.tianqi.weather;
+		// });
 		return weather;
 	}
 
@@ -308,7 +309,7 @@ async function loadWidget(config) {
 		if ('tipsUrl' in modelconfig && modelconfig.tipsUrl != "") {
 			path = modelList.models[modelId].tipsUrl;
 		} else path = waifuPath;
-		const response = await fetch(path);
+		const response = await fetch(pathMerge(modelPath,path));
 		waifuTips = await response.json();
 		if(waifuTips.messages.meetMsg)loadInteraction(waifuTips.messages.meetMsg)
 	}
@@ -318,20 +319,28 @@ async function loadWidget(config) {
 		await loadWaifuTips(modelId);
 	}
 
+	//将modelList中的相对路径转为网络路径，modelList中使用相对路径或网络路径
+	function pathMerge(modelFilePath,relativePath){
+		if(relativePath.includes("http"))return relativePath
+		else return modelFilePath+relativePath.replace("./","")
+	}
+
 	async function loadModel(modelId, modelTexturesId) {
 		localStorage.setItem("modelId", modelId);
 		localStorage.setItem("modelTexturesId", modelTexturesId);
 		//三代模型以后普遍比较大，加载时间比较久，所以隐藏一下
 		document.getElementById("waifu").style.bottom = `-${canvasHeigth*1.5}px`;
-		model = await live2d.Live2DModel.from(idSelection(modelList.models[modelId].url, modelTexturesId));
-		app.stage.removeChildren();
-		app.stage.addChild(model);
-		model.buttonMode = true;
-		autoSetTransform(modelId);
-		console.log(model);
-		drawHitArea(model);
-		console.log(`Live2D 模型 ${modelId}-${modelTexturesId} 加载完成`);
-		document.getElementById("waifu").style.bottom = 0
+		await setTimeout(async ()=>{
+			model = await live2d.Live2DModel.from(pathMerge(modelPath,idSelection(modelList.models[modelId].url, modelTexturesId)));
+			app.stage.removeChildren();
+			app.stage.addChild(model);
+			model.buttonMode = true;
+			autoSetTransform(modelId);
+			drawHitArea(model);
+			console.log(`Live2D 模型 ${modelId}-${modelTexturesId} 加载完成`);
+			//模型加载好会卡顿一下，所以等待半秒
+			setTimeout(()=>{document.getElementById("waifu").style.bottom = 0},500);
+		},1000);
 		return model;
 	}
 
@@ -408,12 +417,6 @@ async function loadWidget(config) {
 	async function loadRandModel() {
 		const modelId = localStorage.getItem("modelId");
 		let modelTexturesId = localStorage.getItem("modelTexturesId");
-
-		// 随机选择
-		//const target = randomSelection(modelList.models[modelId]);
-		//loadlive2d("live2d", `${modelListPath}model/${target}/index.json`);
-		//if(Array.isArray(modelList.models[modelId]))showMessage("我的新衣服好看嘛？", 4000, 10);
-		//else showMessage("我还没有其他衣服呢！", 4000, 10);
 
 		//顺序选择
 		if (Array.isArray(modelList.models[modelId].url)&&modelList.models[modelId].url.length>1) {
