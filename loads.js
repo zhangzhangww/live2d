@@ -1,5 +1,5 @@
 // 注意：live2d_path 参数应使用绝对路径
-const live2d_path = "./";
+const live2d_path = "https://raw.bgithub.xyz/lrplrplrp/live2d/master/";
 const model_path="https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/";
 
 // 封装异步加载资源的方法
