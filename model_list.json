@@ -1,8 +1,8 @@
 {
   "models": [
     {
-      "url":"https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/genshin/BCSZ1.1/BCSZ1.1.model3.json",
-      "tipsUrl":"https://raw.bgithub.xyz/lrplrplrp/live2d/main/waifu-tips-BCSZ.json",
+      "url":"./model/genshin/BCSZ1.1/BCSZ1.1.model3.json",
+      "tipsUrl":"./model/genshin/BCSZ1.1/waifu-tips-BCSZ.json",
       "config":{
         "x":0,
         "y":0,
@@ -11,12 +11,12 @@
       }
     },
     {
-      "url":"https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/genshin/草神/草神.model3.json",
-      "tipsUrl":"./waifu-tips-草神.json"
+      "url":"./model/genshin/草神/草神.model3.json",
+      "tipsUrl":"./model/genshin/草神/waifu-tips-草神.json"
     },
     {
       "url":[
-        "https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/HyperdimensionNeptunia/nepnep/index.json"
+        "./model/HyperdimensionNeptunia/nepnep/index.json"
       ],
       "config":{
         "x":0,

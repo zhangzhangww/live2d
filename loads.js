@@ -1,5 +1,6 @@
 // 注意：live2d_path 参数应使用绝对路径
 const live2d_path = "./";
+const model_path="https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/";
 
 // 封装异步加载资源的方法
 function loadExternalResource(url, type) {
@@ -38,8 +39,8 @@ async function loadScriptsInOrder(){
 	await loadExternalResource(live2d_path + "waifu-tips.js", "js");
 	initWidget({
 		waifuPath: live2d_path + "waifu-tips.json",
-		modelListPath: live2d_path + "model_list.json",
-		modelPath:live2d_path
+		modelListPath: model_path + "model_list.json",
+		modelPath:model_path
 	});
 }}
 

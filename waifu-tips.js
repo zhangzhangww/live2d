@@ -309,6 +309,7 @@ async function loadWidget(config) {
 		if ('tipsUrl' in modelconfig && modelconfig.tipsUrl != "") {
 			path = modelList.models[modelId].tipsUrl;
 		} else path = waifuPath;
+		console.log(pathMerge(modelPath,path));
 		const response = await fetch(pathMerge(modelPath,path));
 		waifuTips = await response.json();
 		if(waifuTips.messages.meetMsg)loadInteraction(waifuTips.messages.meetMsg)
