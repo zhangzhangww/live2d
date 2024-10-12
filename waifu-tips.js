@@ -243,11 +243,11 @@ async function loadWidget(config) {
 	async function getWeather() {
 		const now = new Date().getHours();
 		let weather="晴";
-		await fetch("https://api.vore.top/api/Weather")
-			.then(response => response.json())
-			.then(result => {
-				weather=result.data.tianqi.weather;
-		});
+		// await fetch("https://api.vore.top/api/Weather")//因访问次数不足以满足需求，暂时禁用
+		// 	.then(response => response.json())
+		// 	.then(result => {
+		// 		weather=result.data.tianqi.weather;
+		// });
 		return weather;
 	}
 
