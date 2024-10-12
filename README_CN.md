@@ -5,7 +5,7 @@
 -   [:link:鸣谢](#鸣谢)
 -   [:link:参考链接](#参考链接)
 -   [:link:演示地址](https://lrplrplrp.github.io/live2dDemo.html)
--   大家好啊，磨了这么长时间总算是把船新版本的前端改好了，在此首先感谢[guansss]("https://github.com/guansss/pixi-live2d-display")大佬的live2d框架以及之前编写live2d的大佬们。此次修改重新设计了waifu-jips.json与model_list.json的结构，并且可以对单个模型单独配置waifu-jips.json，模型的地址也可以随意配置。总的来说，就是支持了更多配置、支持了更多模型、优化了配置逻辑。
+-   大家好啊，磨了这么长时间总算是把船新版本的live2d改好了，在此首先感谢[guansss]("https://github.com/guansss/pixi-live2d-display")大佬的live2d框架以及之前编写live2d的大佬们。此次修改重新设计了waifu-jips.json与model_list.json的结构，并且可以对单个模型单独配置waifu-jips.json，模型的地址也可以随意配置。总的来说，就是支持了更多配置、支持了更多模型、优化了配置逻辑。
 ##  食用说明
 -   快速使用，只需在head标签内加上如下代码，load.js 为你的 load.js 文件地址
 ```html
@@ -48,8 +48,20 @@ async function loadScriptsInOrder(){
 }}
 ```
 ***
+-   模型画布配置
+-   [waifu-tips.js](./waifu-tips.js#L1)
+```javascript
+window.PIXI = PIXI;//请无视
+const live2d = PIXI.live2d;//请无视
+const canvasWidth = 300;//画布宽
+const canvasHeigth = 400;//画布高
+const firstModelId=0;//首次加载的模型id
+const firstModelTexturesId=0;//首次加载的材质id
+const github="https://github.com/lrplrplrp/live2d"//github地址
+```
+>	以下内容均为后端配置，fork请转至仓库[https://github.com/lrplrplrp/live2d_api](https://github.com/lrplrplrp/live2d_api)
+***
 -   模型地址与模型加载配置
--   [model_list.json](./model_list.json#L3)
 ```json
     {
       "url":"https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/model/genshin/BCSZ1.1/BCSZ1.1.model3.json",
@@ -69,20 +81,7 @@ async function loadScriptsInOrder(){
     }
 ```
 ***
--   模型画布配置
--   [waifu-tips.js](./waifu-tips.js#L1)
-```javascript
-window.PIXI = PIXI;//请无视
-const live2d = PIXI.live2d;//请无视
-const canvasWidth = 300;//画布宽
-const canvasHeigth = 400;//画布高
-const firstModelId=0;//首次加载的模型id
-const firstModelTexturesId=0;//首次加载的材质id
-const github="https://github.com/lrplrplrp/live2d"//github地址
-```
-***
 -   模型文本文件配置
--   [waifu-tips-XXX.json](./waifu-tips.json#L1)
 -   由于文件过长，这里只简单解释下节点分类
 -   [messages-模型的特殊情况下的交互](./waifu-tips.json#L2)
 -   [mouseover-鼠标悬浮在某些元素上时的交互](./waifu-tips.json#L22)

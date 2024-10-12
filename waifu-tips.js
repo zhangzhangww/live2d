@@ -243,11 +243,11 @@ async function loadWidget(config) {
 	async function getWeather() {
 		const now = new Date().getHours();
 		let weather="晴";
-		// await fetch("https://api.vore.top/api/Weather")
-		// 	.then(response => response.json())
-		// 	.then(result => {
-		// 		weather=result.data.tianqi.weather;
-		// });
+		await fetch("https://api.vore.top/api/Weather")
+			.then(response => response.json())
+			.then(result => {
+				weather=result.data.tianqi.weather;
+		});
 		return weather;
 	}
 
@@ -309,10 +309,8 @@ async function loadWidget(config) {
 		if ('tipsUrl' in modelconfig && modelconfig.tipsUrl != "") {
 			path = modelList.models[modelId].tipsUrl;
 		} else path = waifuPath;
-		console.log(pathMerge(modelPath,path));
 		const response = await fetch(pathMerge(modelPath,path));
 		waifuTips = await response.json();
-		if(waifuTips.messages.meetMsg)loadInteraction(waifuTips.messages.meetMsg)
 	}
 
 	async function loadModelConfig(modelId) {
@@ -340,7 +338,10 @@ async function loadWidget(config) {
 			drawHitArea(model);
 			console.log(`Live2D 模型 ${modelId}-${modelTexturesId} 加载完成`);
 			//模型加载好会卡顿一下，所以等待半秒
-			setTimeout(()=>{document.getElementById("waifu").style.bottom = 0},500);
+			setTimeout(()=>{
+				document.getElementById("waifu").style.bottom = 0;
+				if(waifuTips.messages.meetMsg)loadInteraction(waifuTips.messages.meetMsg)
+			},500);
 		},1000);
 		return model;
 	}
