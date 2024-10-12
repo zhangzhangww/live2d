@@ -38,7 +38,7 @@ async function loadScriptsInOrder(){
 	await loadExternalResource(live2d_path + "index.min.js", "js");
 	await loadExternalResource(live2d_path + "waifu-tips.js", "js");
 	initWidget({
-		waifuPath: live2d_path + "waifu-tips.json",
+		waifuPath: model_path + "waifu-tips.json",
 		modelListPath: model_path + "model_list.json",
 		modelPath:model_path
 	});
