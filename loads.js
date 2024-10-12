@@ -1,5 +1,5 @@
 // 注意：live2d_path 参数应使用绝对路径
-const live2d_path = "https://fastly.jsdelivr.net/gh/lrplrplrp/live2d@main/";
+const live2d_path = "https://raw.bgithub.xyz/lrplrplrp/live2d/refs/heads/main/";
 const model_path="https://raw.bgithub.xyz/lrplrplrp/live2d_api/master/";
 
 // 封装异步加载资源的方法
@@ -27,18 +27,14 @@ function loadExternalResource(url, type) {
 }
 async function loadScriptsInOrder(){
 	if (screen.width >= 768) {//使用宽度判断设备是否适合加载
-		try {
-			await Promise.all([
-			loadExternalResource(live2d_path + "pixi.min.js", "js"),
-			loadExternalResource(live2d_path + "live2d.min.js", "js"),
-			loadExternalResource(live2d_path + "live2dcubismcore.min.js", "js"),
-			loadExternalResource("https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js", "js"),
-			loadExternalResource(live2d_path + "waifu.css", "css"),
-			loadExternalResource("https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css", "css")
-		])
-		} catch (error) {
-			console.error(error);
-		}
+	await Promise.all([
+		loadExternalResource(live2d_path + "pixi.min.js", "js"),
+		loadExternalResource(live2d_path + "live2d.min.js", "js"),
+		loadExternalResource(live2d_path + "live2dcubismcore.min.js", "js"),
+		loadExternalResource("https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js", "js"),
+		loadExternalResource(live2d_path + "waifu.css", "css"),
+		loadExternalResource("https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css", "css")
+	])
 	await loadExternalResource(live2d_path + "index.min.js", "js");
 	await loadExternalResource(live2d_path + "waifu-tips.js", "js");
 	initWidget({
