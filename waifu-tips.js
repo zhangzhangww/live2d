@@ -22,14 +22,14 @@ async function loadWidget(config) {
 			<div id="waifu-tips"></div>
 			<canvas id="live2d"></canvas>
 			<div id="waifu-tool">
-				<span class="fa fa-xl fa-comment"></span>
-				<span class="fa fa-xl fa-solid fa-cloud"></span>
-				<span class="fa fa-xl fa-paper-plane"></span>
-				<span class="fa fa-xl fa-user-circle"></span>
-				<span class="fa fa-xl fa-street-view"></span>
-				<span class="fa fa-xl fa-info-circle"></span>
-				<span class="fa fa-xl fa-brands fa-github"></span>
-				<span class="fa fa-xl fa-times"></span>
+				<span class="fa-xl fa-comment"></span>
+				<span class="fa-xl fa-solid fa-cloud"></span>
+				<span class="fa-xl fa-paper-plane"></span>
+				<span class="fa-xl fa-user-circle"></span>
+				<span class="fa-xl fa-street-view"></span>
+				<span class="fa-xl fa-info-circle"></span>
+				<span class="fa-xl fa-brands fa-github"></span>
+				<span class="fa-xl fa-times"></span>
 			</div>
 		</div>`);
 	document.getElementById("live2d").style.width = canvasWidth+"px";//fa-brands fa-github   fa-solid fa-cloud 
