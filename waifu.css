@@ -79,7 +79,7 @@
 
 #waifu-tool {
 	color: #aaa;
-	font-size: initial;
+	font: initial;
 	opacity: 0;
 	position: absolute;
 	right: -10px;
