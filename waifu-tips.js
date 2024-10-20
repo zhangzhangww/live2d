@@ -144,22 +144,42 @@ async function loadWidget(config) {
 		loadModel(modelId, modelTexturesId).then(result => {
 			model = result;
 			window.addEventListener("mouseover", event => {
+				const { year } = new Date();
+				const tipsKey={
+					"{text}":event.target.innerText,
+					"{year}":year,
+					"{title}":document.title.split('-')[0]
+				}
 				for (let {
 					selector,
 					interaction
 				} of waifuTips.mouseover) {
 					if (!event.target.matches(selector)) continue;
-					if(interaction)loadInteraction(interaction);
+					if(interaction)loadInteraction(interaction,(text)=>{
+						tempText=text;
+						for(let key in tipsKey)tempText=tempText.replace(key, tipsKey[key]);
+						return tempText;
+						});
 					return;
 				}
 			});
 			window.addEventListener("click", event => {
+				const { year } = new Date();
+				const tipsKey={
+					"{text}":event.target.innerText,
+					"{year}":year,
+					"{title}":document.title.split('-')[0]
+				}
 				for (let {
 					selector,
 					interaction
 				} of waifuTips.click) {
 					if (!event.target.matches(selector)) continue;
-					if(interaction)loadInteraction(interaction,(text)=>text.replace("{text}", event.target.innerText));
+					if(interaction)loadInteraction(interaction,(text)=>{
+						tempText=text;
+						for(let key in tipsKey)tempText=tempText.replace(key, tipsKey[key]);
+						return tempText;
+						});
 					return;
 				}
 			});
@@ -214,19 +234,19 @@ async function loadWidget(config) {
 
 
 	function welcomeMessage() {
-		let text;
-		if (location.pathname === "/lrplrplrp/") { // 如果是主页，可在浏览器后台输入location.pathname确定判断条件
+		let interAction;
+		if (location.pathname === "/lrplrplrp/") { // 如果是主页，可在浏览器后台输入location.pathname确定判断条件 
 			loadInteraction(waifuTips.messages.home)
 		} 
 		if (document.referrer !== "") {
 			const referrer = new URL(document.referrer),
 				domain = referrer.hostname.split(".")[1];
-			if (location.hostname === referrer.hostname) text = waifuTips.messages.location;
-			for(key in waifuTips.messages.domain)if(domain===key)text=waifuTips.messages.domain[key];
-			if(!text) text = waifuTips.messages.domain_other;
+			if (location.hostname === referrer.hostname) interAction = waifuTips.messages.location;
+			for(key in waifuTips.messages.domain)if(domain===key)interAction=waifuTips.messages.domain[key];
+			if(!interAction) interAction = waifuTips.messages.domain_other;
 		} 
-		if(!text)text = waifuTips.messages.path_other;
-		loadInteraction(text);
+		if(!interAction)interAction = waifuTips.messages.path_other;
+		loadInteraction(interAction,(text)=>text.replace("{title}", document.title.split('-')[0]));
 	}
 
 	function showHitokoto() {
@@ -337,7 +357,7 @@ async function loadWidget(config) {
 			autoSetTransform(modelId);
 			drawHitArea(model);
 			console.log(`Live2D 模型 ${modelId}-${modelTexturesId} 加载完成`);
-			//模型加载好会卡顿一下，所以等待半秒
+			//三代模型加载卡顿比较明显，目前还没有解决方案,模型加载好会卡顿一下，所以等待半秒
 			setTimeout(()=>{
 				document.getElementById("waifu").style.bottom = 0;
 				if(waifuTips.messages.meetMsg)loadInteraction(waifuTips.messages.meetMsg)
@@ -409,11 +429,11 @@ async function loadWidget(config) {
 		let text="";
 		if(interaction.text){
 			text=randomSelection(interaction.text);
-			if(textFunc)textFunc(text);
+			if(textFunc)text=textFunc(text);
 			showMessage(text,priority);
 		}
 		if(interaction.motion)setMotion( interaction.motion);
-		else if(interaction.expression)setExpression( interaction.expression, time)
+		else if(interaction.expression)setExpression( interaction.expression)
 	}
 
 	async function loadRandModel() {
@@ -439,7 +459,6 @@ async function loadWidget(config) {
 		loadModel(index, 0, "");
 		loadModelConfig(index);
 	}
-
 
 	await initModel();
 	registerEventListener();
