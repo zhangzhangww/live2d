@@ -130,6 +130,18 @@ async function loadWidget(config) {
 		return (checkDate() && checkTime())
 	}
 	
+	function keyReplace(text,event=undefined){
+		const { year } = new Date();
+		const tipsKey={
+			"{text}":event?event.target.innerText:undefined,
+			"{year}":year,
+			"{title}":document.title.split('-')[0],
+			"{hostname}":document.referrer.hostname
+		}
+		tempText=text;
+		for(let key in tipsKey)tempText=tempText.replace(key, tipsKey[key]);
+		return tempText;
+	}
 
 	async function initModel() {
 		let modelId = localStorage.getItem("modelId"),
@@ -144,42 +156,34 @@ async function loadWidget(config) {
 		loadModel(modelId, modelTexturesId).then(result => {
 			model = result;
 			window.addEventListener("mouseover", event => {
-				const { year } = new Date();
-				const tipsKey={
-					"{text}":event.target.innerText,
-					"{year}":year,
-					"{title}":document.title.split('-')[0]
-				}
+				//const { year } = new Date();
+				// const tipsKey={
+				// 	"{text}":event.target.innerText,
+				// 	"{year}":year,
+				// 	"{title}":document.title.split('-')[0]
+				// }
 				for (let {
 					selector,
 					interaction
 				} of waifuTips.mouseover) {
 					if (!event.target.matches(selector)) continue;
-					if(interaction)loadInteraction(interaction,(text)=>{
-						tempText=text;
-						for(let key in tipsKey)tempText=tempText.replace(key, tipsKey[key]);
-						return tempText;
-						});
+					if(interaction)loadInteraction(interaction,(text)=>keyReplace(text,event));
 					return;
 				}
 			});
 			window.addEventListener("click", event => {
-				const { year } = new Date();
-				const tipsKey={
-					"{text}":event.target.innerText,
-					"{year}":year,
-					"{title}":document.title.split('-')[0]
-				}
+				// const { year } = new Date();
+				// const tipsKey={
+				// 	"{text}":event.target.innerText,
+				// 	"{year}":year,
+				// 	"{title}":document.title.split('-')[0]
+				// }
 				for (let {
 					selector,
 					interaction
 				} of waifuTips.click) {
 					if (!event.target.matches(selector)) continue;
-					if(interaction)loadInteraction(interaction,(text)=>{
-						tempText=text;
-						for(let key in tipsKey)tempText=tempText.replace(key, tipsKey[key]);
-						return tempText;
-						});
+					if(interaction)loadInteraction(interaction,(text)=>keyReplace(text,event));
 					return;
 				}
 			});
@@ -246,7 +250,7 @@ async function loadWidget(config) {
 			if(!interAction) interAction = waifuTips.messages.domain_other;
 		} 
 		if(!interAction)interAction = waifuTips.messages.path_other;
-		loadInteraction(interAction,(text)=>text.replace("{title}", document.title.split('-')[0]));
+		loadInteraction(interAction,(text)=>keyReplace(text));//{hostname}
 	}
 
 	function showHitokoto() {
