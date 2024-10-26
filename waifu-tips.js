@@ -22,14 +22,14 @@ async function loadWidget(config) {
 			<div id="waifu-tips"></div>
 			<canvas id="live2d"></canvas>
 			<div id="waifu-tool">
-				<span class="fa-xl fa-comment"></span>
-				<span class="fa-xl fa-solid fa-cloud"></span>
-				<span class="fa-xl fa-paper-plane"></span>
-				<span class="fa-xl fa-user-circle"></span>
-				<span class="fa-xl fa-street-view"></span>
-				<span class="fa-xl fa-info-circle"></span>
-				<span class="fa-xl fa-brands fa-github"></span>
-				<span class="fa-xl fa-times"></span>
+				<span class="fa-solid fa-2xl fa-comment"></span>
+				<span class="fa-solid fa-2xl fa-cloud"></span>
+				<span class="fa-solid fa-2xl fa-paper-plane"></span>
+				<span class="fa-solid fa-2xl fa-user-circle"></span>
+				<span class="fa-solid fa-2xl fa-street-view"></span>
+				<span class="fa-solid fa-2xl fa-info-circle"></span>
+				<span class="fa-2xl fa-brands fa-github"></span>
+				<span class="fa-solid fa-2xl fa-times"></span>
 			</div>
 		</div>`);
 	document.getElementById("live2d").style.width = canvasWidth+"px";//fa-brands fa-github   fa-solid fa-cloud 
@@ -319,7 +319,7 @@ async function loadWidget(config) {
 	}
 
 	async function loadModelList() {
-		const response = await fetch(modelListPath);
+		const response = await fetch(modelListPath);//, {mode: 'no-cors'}
 		modelList = await response.json();
 	}
 
