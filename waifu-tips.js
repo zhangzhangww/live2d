@@ -28,7 +28,7 @@ async function loadWidget(config) {
 				<span class="fa-solid fa-xl fa-user-circle"></span>
 				<span class="fa-solid fa-xl fa-street-view"></span>
 				<span class="fa-solid fa-xl fa-info-circle"></span>
-				<span class="fa-2xl fa-brands fa-github"></span>
+				<span class="fa-xl fa-brands fa-github"></span>
 				<span class="fa-solid fa-xl fa-times"></span>
 			</div>
 		</div>`);
