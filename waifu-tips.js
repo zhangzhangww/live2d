@@ -5,7 +5,7 @@ const canvasWidth = 200;//画布宽
 const canvasHeigth = 300;//画布高
 const firstModelId=3;//首次加载的模型id
 const firstModelTexturesId=0;//首次加载的材质id
-const github="https://github.com/lrplrplrp/live2d"
+const github="https://github.com/zhangzhangww/live2d"
 
 async function loadWidget(config) {
 	let {
