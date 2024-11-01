@@ -1,8 +1,8 @@
 
 window.PIXI = PIXI;
 const live2d = PIXI.live2d;
-const canvasWidth = 300;//画布宽
-const canvasHeigth = 400;//画布高
+const canvasWidth = 200;//画布宽
+const canvasHeigth = 300;//画布高
 const firstModelId=0;//首次加载的模型id
 const firstModelTexturesId=0;//首次加载的材质id
 const github="https://github.com/lrplrplrp/live2d"
